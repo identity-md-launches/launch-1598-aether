@@ -1,5 +1,8 @@
 # AETHER — final rules and constants
 
+This document describes the original game. The optional deterministic companion is specified separately
+in [STRATEGY.md](STRATEGY.md); adding it does not change these contracts or issue any new tokens.
+
 Chain: Ethereum mainnet. Pair token: IMD (`0xd34a99bc0f67ae1bbd63c660e6d0b0dd03e263b7`).
 Airdrop set: identity.md NFT holders (`0x0000ec93127baa929e58e97dd0095a2bfb38ec1d`, 2,000 NFTs).
 Nothing below can be changed after launch: there is no owner, no admin and no upgrade path in any contract.
@@ -62,7 +65,9 @@ Each energy fails independently with its machine's rate. Draws: 32-bit samples f
 90% of the tranche is split 60 / 20 / 20 / 0 and assigned to the machines at random from the epoch seed (the
 60 goes to `seed % 4`, the 0 to one of the three others chosen by `(seed >> 8) % 3`). Surviving energies of a
 machine split its Share pro rata. A machine with no survivor sends its Share to the day's Harvest pot;
-integer-division dust goes there too. Expected Share per energy is the same on every machine.
+integer-division dust goes there too. Each machine has the same expected assigned Share under ideal
+randomness; expected payout per energy also depends on crowding and the probability of no survivors.
+The machines do not have identical expected returns per energy.
 
 ## 6. Harvest (per day)
 
@@ -87,8 +92,9 @@ the wallet as plain ERC-20. Claiming is the only exit.
 - The seed fixes the Share assignment and every energy's outcome. Batches are then processed in pages of
   `maxBatches`, so gas per call is bounded regardless of how many players there are.
 - The tranche is pulled from the Reserve when the epoch is seeded.
-- Bias bound: the proposer of block `lockBlock + 1` can withhold it to re-roll once, at the cost of a block
-  reward, for an epoch stake of at most 60% x 90% of one tranche (~0.2 AETHER at launch). See RISKS.md.
+- This is not verifiable randomness. Block producers can influence candidate block contents, and missed
+  windows allow the seed source to change. No safe manipulation-cost bound has been established; the
+  value at stake includes Harvest and other positions, not just one machine's Share. See RISKS.md.
 
 ## 9. Pool and hook (AetherLPVault, AetherHook)
 

@@ -44,8 +44,9 @@ Whale dump: 300 AETHER sold at once moved the price from 2,576 to 439 IMD and pa
 
 Mechanics checked by the model (and by the Foundry tests): every tranche is fully paid or pooled, the Harvest
 is emptied every night, the Reserve ends at exactly 0 on epoch 52,559 and the game switches to recycling, the
-expected Share per energy is equal across machines while Harvest per energy grows with the fail rate (Air
-gamblers' Harvest share is the largest in every run).
+random assignment has equal expected Share allocation per machine. That does not imply equal per-energy
+returns: crowding and empty-survivor pools matter. Air gamblers' Harvest share is the largest in the recorded
+runs, but this is a model result, not a universal fairness or equilibrium guarantee.
 
 ## Why these choices
 
@@ -62,13 +63,15 @@ epoch break even on Shares alone; the Harvest adds the risk premium on top.
 **LP range x10,000, single-sided.** A x100 range was tried first: under sustained buying the pool ran out of
 AETHER within two months, the price pinned at the top of the range and energies became unbuyable (the
 model's day-60 energies went to zero). Widening to x10,000 costs only ~10% of launch depth near P0 (the
-liquidity for a given amount of token0 barely depends on the upper bound) and removes the cliff.
+liquidity for a given amount of token0 barely depends on the upper bound) and moves the boundary further
+away in this model. A finite range still has a boundary and cannot guarantee liquidity at every price.
 
 **Opening price.** Set at launch via `imdPerAetherWad`; the model uses 100 IMD. The key metric is that the
 first hour's sniper nets less than 1% of what they paid, independent of P0.
 
-**Randomness.** Next-block hash after a lock, permissionless, paged settlement. The per-epoch stake (~0.2
-AETHER at launch) is far below the cost of withholding a block; see RISKS.md.
+**Randomness.** Next-block hash after a lock, permissionless, paged settlement. This model does not simulate
+block production, hash grinding or selective keeper delays and cannot justify a manipulation-cost bound;
+see the corrected assessment in RISKS.md.
 
 **Whale protection.** Price impact plus the 500-energy batch cap: in the whale scenario the whales' return is
 the lowest of all agent types in every run, and their dump pays the Harvest.
@@ -83,3 +86,10 @@ the lowest of all agent types in every run, and their dump pays the Harvest.
   epoch's totals.
 - Blocks, gas and keeper lag are not modelled: settlement is assumed instantaneous.
 - One seed is committed; run with other seeds to see the variance (`--seed`).
+
+## Companion strategy model
+
+`python3 sim/strategy_sim.py` uses exact integer accounting for the optional `AetherStrategy` rules.
+It runs 10,000 deterministic randomized rounds and prints [sim/strategy_results.md](sim/strategy_results.md),
+including balanced/crowded machines, missed reveals, finite sponsorship and demand disappearing. It does
+not modify or rerun the original model's economic assumptions, and makes no price prediction.

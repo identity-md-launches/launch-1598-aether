@@ -1,3 +1,6 @@
 out/
 cache/
 test/scratch/
+__pycache__/
+*.pyc
+*.aether-reveal.json

@@ -28,15 +28,18 @@ holders while people play.
 - The ETH entry route depends on an external ETH/IMD v4 pool fixed at launch. If that pool is empty or
   removed, the ETH route reverts (`EthRouteUnavailable`) and only the IMD route works.
 
-## Randomness (known limitation, documented choice)
+## Randomness (unresolved in the original game)
 
-The seed is the hash of the block after the lock block. This is not a VRF. The proposer of that block can see
-the outcome before publishing and withhold the block to re-roll once, at the cost of the block reward. The
-stake per epoch (the 60% Share of 90% of one tranche: about 0.2 AETHER at launch, less later) is far below a
-block reward, so the attack does not pay unless AETHER becomes worth more than a block reward per 0.2 AETHER.
-The locker cannot bias anything: the next block's hash is unknown when locking. If the 256-block window is
-missed the epoch is re-locked; outcomes are delayed, never lost. A Chainlink VRF design was rejected because it
-needs a funded subscription and an owner to manage it, and the brief forbids any admin.
+The seed is the hash of the block after the lock block. This is not a VRF. Block producers can influence
+block contents and therefore candidate hashes; an attacker is not necessarily limited to discarding one
+block at the cost of its reward. The prior claim of that cost bound was unsupported. Harvest and other
+positions can also be at stake, so 60% of one tranche's survivor allocation is not a complete exposure bound.
+
+If the 256-block window is missed, the epoch is re-locked and obtains a different seed source. A keeper
+able to delay settlement can selectively withhold unfavorable outcomes while no independent caller
+settles them. Permissionless settlement reduces dependence on one keeper, but does not prove unbiased
+randomness. Do not treat the current mechanism as safe for valuable random play. A separate verifiable
+randomness integration and adversarial review are needed; this assignment has not changed legacy settlement.
 
 ## Keeper dependency
 
@@ -71,3 +74,17 @@ iterations, gas budget ~2-6M, unbounded in theory).
 The agent-based model is a first pass with simple agents and a crude external market (see SIMULATION.md,
 "Limitations"). It does not price the token, it checks the mechanics. Real outcomes depend on how many people
 play, how much they sell, and the IMD market.
+
+## Optional strategy companion
+
+`AetherStrategy` introduces deterministic crowding payouts and therefore has no random seed. It does not
+repair the original game's randomness or liquidity. Every accepted ticket is irreversible, including
+when a player loses its secret or misses the reveal window. Non-reveals get no payout; empty machine
+pools and integer dust roll forward and may attract bots in later rounds. At low activity a player on
+only one machine can lose most of its entry value even when nobody competes on that machine.
+
+Rewards are finite and funded, but ordinary play is negative-sum by the 5% burn before gas and external
+trading fees. Sponsorship is an irrevocable subsidy, not external yield guaranteed by the system. Wealth
+can buy more influence; linear ticket accounting prevents a wallet-count bonus, not concentration.
+The launch owner must correctly configure the existing token once; there is no recovery or asset-change
+power afterwards. No independent audit or deployment is claimed. Full terms: [STRATEGY.md](STRATEGY.md).

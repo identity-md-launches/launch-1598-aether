@@ -16,8 +16,8 @@ pick a machine, survive the epoch, split the Share. Fail, and you split the nigh
    buys AETHER and destroys it. The price adjusts with the pool.
 2. **Pick a machine.** Earth (10% fail), Water (30%), Fire (60%), Air (90%). Same price everywhere.
 3. **Every 10 minutes** the Reserve releases a tranche. 90% is cut into Shares, 60 / 20 / 20 / 0, dealt to the
-   four machines at random. Surviving energies split their machine's Share. The expected Share per energy is
-   the same on every machine: the fail rate cancels out.
+   four machines at random. Surviving energies split their machine's Share. Returns depend on how crowded
+   the machine is, which Share it receives and whether any energies survive.
 4. **Every night** the other 10%, every Tithe and every swap fee form the Harvest. After epoch 144 the whole
    pot is split equally among all the day's failed energies, whatever the machine. Risky machines fail more,
    so they harvest more. That is the point.
@@ -56,3 +56,16 @@ next epochs instead of burning).
 AETHER is a game of chance. You pay in IMD and every IMD you spend is used to buy and burn AETHER; it cannot
 be refunded. Energies can earn nothing. AETHER's value depends entirely on IMD. Nothing here is financial
 advice. Check whether playing is legal where you live. No one can pause, reverse or change this game.
+
+## Optional strategy mode (copy for a future integration)
+
+**Predict the crowd. Choose your machine in secret.**
+
+Pay 0.01 AETHER per ticket. 5% is burned; 95% joins the reward pool. Commit during the 20-hour entry window,
+then reveal during the next 4 hours. Each machine gets an equal pool, split among its revealed tickets:
+less crowded machines pay more per ticket. Empty pools roll into the next round.
+
+Save your private reveal receipt. Entries cannot be refunded, and missing the reveal means no payout.
+Rewards come only from paid entries, rollovers and visible sponsorship. Gas and any cost of buying AETHER
+are extra. There is no guaranteed profit or price appreciation. These are separate rules from the original
+IMD game; this copy does not mean the companion is deployed or that the website has been integrated.
